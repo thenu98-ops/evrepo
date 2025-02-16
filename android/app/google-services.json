@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "753585201226",
+    "firebase_url": "https://evapp-6e864-default-rtdb.firebaseio.com",
+    "project_id": "evapp-6e864",
+    "storage_bucket": "evapp-6e864.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753585201226:android:8b22db0c42bf8cba9b86b3",
+        "android_client_info": {
+          "package_name": "com.example.ev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9jXXTGwSa-Jwbw4mFqV73l_SS4NUYQBI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
