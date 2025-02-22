@@ -20,12 +20,13 @@ class Profile {
     required this.city,
     required this.balance,
     required this.energyKw,
-    required this.isCharging
+    required this.isCharging,
   });
 
   // Convert Profile to JSON for Firestore
   Map<String, dynamic> toJson() {
     return {
+      "id": id, // Include the 'id' field in the JSON
       "email": email,
       "firstName": firstName,
       "lastName": lastName,
@@ -34,7 +35,7 @@ class Profile {
       "city": city,
       "balance": balance,
       "energyKw": energyKw,
-      "isCharging": isCharging
+      "isCharging": isCharging,
     };
   }
 
@@ -49,8 +50,8 @@ class Profile {
       address: json["address"],
       city: json["city"],
       balance: json["balance"] ?? 0,
-      energyKw: json["energyKw"]??0,
-       isCharging: json['isCharging'],
+      energyKw: json["energyKw"] ?? 0,
+      isCharging: json['isCharging'] ?? false,
     );
   }
 }

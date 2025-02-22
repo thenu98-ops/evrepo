@@ -1,8 +1,7 @@
-import 'package:ev/login.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ev/services/firebasemodel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:ev/login.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,72 +11,88 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  Profile? userProfile;
+  String name = "";
+  String city = "";
+  String address = "";
+  String mobile = "";
 
   @override
   void initState() {
     super.initState();
-    fetchUserProfile();
+    _fetchProfileData();
   }
 
-Future<void> fetchUserProfile() async {
-  String? userEmail = _auth.currentUser?.email;
+  void _fetchProfileData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot profileDoc = await FirebaseFirestore.instance
+          .collection('profile')
+          .doc(user.uid)
+          .get();
 
-  if (userEmail == null) return; // Ensure user is logged in
-
-  QuerySnapshot query = await _firestore
-      .collection('profile')
-      .where('email', isEqualTo: userEmail)
-      .limit(1)
-      .get();
-
-  if (query.docs.isNotEmpty && mounted) {  // ✅ Check if widget is still in tree
-    setState(() {
-      userProfile = Profile.fromJson(
-          query.docs.first.data() as Map<String, dynamic>,
-          query.docs.first.id);
-    });
+      if (profileDoc.exists) {
+        setState(() {
+          name = profileDoc['firstName'] ?? "N/A";
+          city = profileDoc['city'] ?? "N/A";
+          address = profileDoc['address'] ?? "N/A";
+          mobile = profileDoc['mobile'] ?? "N/A";
+        });
+      }
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
-      body: userProfile == null
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Name: ${userProfile!.firstName} ${userProfile!.lastName}',
-                      style: const TextStyle(fontSize: 18)),
-                  const SizedBox(height: 10),
-                  Text('Email: ${userProfile!.email}',
-                      style: const TextStyle(fontSize: 18)),
-                  const SizedBox(height: 10),
-                  Text('Mobile: ${userProfile!.mobile}',
-                      style: const TextStyle(fontSize: 18)),
-                  const SizedBox(height: 10),
-                  Text('Address: ${userProfile!.address}',
-                      style: const TextStyle(fontSize: 18)),
-                  const SizedBox(height: 10),
-                  Text('City: ${userProfile!.city}',
-                      style: const TextStyle(fontSize: 18)),
-                  const SizedBox(height: 10),
-                  ElevatedButton(onPressed: (){
-                    _auth.signOut();
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login())); 
-                  }, child: Text('Logout'))
-                ],
-                
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // User Details Section
+            _buildProfileRow("Name", name, Icons.person),
+            _buildProfileRow("City", city, Icons.location_city),
+            _buildProfileRow("Address", address, Icons.home),
+            _buildProfileRow("Mobile", mobile, Icons.phone),
+
+            const Spacer(), // Pushes logout button to the bottom
+
+            // Logout Button
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Login()),
+                  );
+                },
+                icon: const Icon(Icons.logout),
+                label: const Text('Logout'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileRow(String label, String value, IconData icon) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.blue),
+        title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(value, style: const TextStyle(fontSize: 16)),
+      ),
     );
   }
 }

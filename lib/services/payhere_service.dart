@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:payhere_mobilesdk_flutter/payhere_mobilesdk_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:flutter/material.dart';
 
 //  final TextEditingController _amountController = TextEditingController();
@@ -52,6 +54,7 @@ void startPayment() {
     paymentObject, 
     (paymentId) {
       print("One Time Payment Success. Payment Id: $paymentId");
+      
     }, 
     (error) { 
       print("One Time Payment Failed. Error: $error");
@@ -61,6 +64,42 @@ void startPayment() {
     }
   );
 }
+
+
+
+// void startPayment(String userId) {
+//   PayHere.startPayment(
+//     paymentObject,
+//     (paymentId) async {
+//       print("One Time Payment Success. Payment Id: $paymentId");
+
+//       double paymentAmount = (paymentObject["amount"] as num).toDouble();
+
+//       // Reference to the user's profile document
+//       DocumentReference profileRef =
+//           FirebaseFirestore.instance.collection("profile").doc(userId);
+
+//       FirebaseFirestore.instance.runTransaction((transaction) async {
+//         DocumentSnapshot snapshot = await transaction.get(profileRef);
+
+//         if (snapshot.exists) {
+//           double currentBalance =
+//               ((snapshot.data() as Map<String, dynamic>)["balance"] as num?)?.toDouble() ?? 0.0;
+//           double updatedBalance = currentBalance + paymentAmount;
+
+//           transaction.update(profileRef, {"balance": updatedBalance});
+//         }
+//       });
+//     },
+//     (error) {
+//       print("One Time Payment Failed. Error: $error");
+//     },
+//     () {
+//       print("One Time Payment Dismissed");
+//     },
+//   );
+// }
+
 
 
 void onRechargeTap(BuildContext context) {
@@ -101,6 +140,7 @@ void onRechargeTap(BuildContext context) {
               } else {
                 // Update amount in paymentObject
                 paymentObject["amount"] = amountText;
+                // User? user = FirebaseAuth.instance.currentUser;
                 startPayment(); // Start payment process
                 Navigator.pop(context); // Close dialog after confirmation
               }

@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'login.dart';
 import '../services/firestore.dart';
 import 'firebase_options.dart';
+import 'splash_screen.dart';
 
 
 
@@ -14,16 +15,7 @@ import 'firebase_options.dart';
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-  //     options: const FirebaseOptions(
-  //     apiKey: 'AIzaSyCSfurzlb6eZTAtxFoU8J_2HO_688ttE-o',
-  //     authDomain: 'noreply@evapp-6e864.firebaseapp.com',
-  //     // databaseURL: 'https://cradlecare-1.firebaseio.com',
-  //     projectId: 'evapp-6e864',
-  //     storageBucket: 'evapp-6e864.appspot.com',
-  //     messagingSenderId: '753585201226',
-  //     appId: '1:753585201226:android:8b22db0c42bf8cba9b86b3', 
-  //     // measurementId: 'G-1',
-  // ),
+
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseFirestore.instance.settings = const Settings(
@@ -45,7 +37,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
 
-      home:  Login(),
+      home:  SplashScreen(),
     );
   }
 }
